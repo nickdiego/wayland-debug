@@ -41,13 +41,15 @@ class Controller(CommandSink,
         output: Output,
         connection_list: ConnectionList,
         display_matcher: matcher.MessageMatcher,
-        stop_matcher: matcher.MessageMatcher
+        stop_matcher: matcher.MessageMatcher,
+        target_connection: Optional[str]
     ):
         self.out = output
         self.connection_list = connection_list
         connection_list.add_connection_list_listener(self, True)
         self.display_matcher = display_matcher
         self.stop_matcher = stop_matcher
+        self.target_connection = target_connection
         self.current_connection: Optional[Connection] = None # The connection that is currently being shown
         self.connection_explicitly_selected = False # If the current connection was selected by the user
         # NOTE: remember to also update the readme when command help text changes
@@ -115,7 +117,11 @@ class Controller(CommandSink,
             else:
                 switch_current = True
         else:
-            switch_current = True
+            if self.target_connection:
+                switch_current = connection.name() == self.target_connection
+                self.connection_explicitly_selected = switch_current
+            else:
+                switch_current = True
         if switch_current:
             self.current_connection = connection
             self.out.show(color(

@@ -37,6 +37,7 @@ class Arguments:
         filter_matcher: matcher.Matcher,
         stop_matcher: matcher.Matcher,
         wayland_libs: List[str],
+        connection: str,
         wayland_debug_args: List[str],
         command_args: List[str]
     ) -> None:
@@ -48,6 +49,7 @@ class Arguments:
         self.filter_matcher = filter_matcher
         self.stop_matcher = stop_matcher
         self.wayland_libs = wayland_libs
+        self.connection = connection
         self.wayland_debug_args = wayland_debug_args
         self.command_args = command_args
 
@@ -62,6 +64,7 @@ class Arguments:
             matcher.always,
             matcher.never,
             _get_libwayland_libs(None),
+            None,
             ['main.py'],
             [],
         )
@@ -174,6 +177,7 @@ def parse_args(argv: List[str]) -> Arguments:
     parser.add_argument('--supress', action='store_true', help='supress non-wayland output of the program')
     parser.add_argument('--verbose', action='store_true', help='verbose output, mostly used for debugging this program')
     parser.add_argument('--libwayland', type=str, help='path to directory that contains libwayland-client.so and libwayland-server.so. Only applies to GDB and run mode. Must come before --gdb/--run argument')
+    parser.add_argument('--connection', type=str, help='The connection label to show debug messages. Only applies to pipe/file and run mode.')
     # NOTE: -g/--gdb, -r/--run and --libwayland are here only for the help text, they are processed without argparse
 
     args = parser.parse_args(args=wayland_debug_args[1:]) # chop off the first argument (program name)
@@ -244,6 +248,7 @@ def parse_args(argv: List[str]) -> Arguments:
         filter_matcher,
         stop_matcher,
         libwayland_libs,
+        args.connection,
         wayland_debug_args,
         command_args
     )

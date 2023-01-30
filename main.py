@@ -55,7 +55,7 @@ def main(args: Arguments, output: Output, input_func: Callable[[str], str]) -> N
     else:
         protocol.load_all(output)
         connection_list = ConnectionManager()
-        ui_controller = Controller(output, connection_list, args.filter_matcher, args.stop_matcher)
+        ui_controller = Controller(output, connection_list, args.filter_matcher, args.stop_matcher, args.connection)
         if args.mode == Mode.GDB_PLUGIN:
             try:
                 gdb_plugin.plugin.Plugin(output, connection_list, ui_controller, ui_controller)
